@@ -7,12 +7,19 @@ module.exports = {
   env: { browser: true, node: true },
   extends: [
     'airbnb',
+    'plugin:flowtype/recommended',
     'prettier',
+    'prettier/flowtype',
     'prettier/react',
     'prettier/standard',
   ],
-  plugins: ['react', 'prettier'],
+  plugins: ['react', 'prettier', 'flowtype'],
   rules: {
+    'flowtype/sort-keys': [
+      ERROR,
+      'asc',
+      { caseSensitive: true, natural: false },
+    ],
     'import/order': [WARN, { 'newlines-between': 'always' }],
     'react/destructuring-assignment': OFF,
     'react/jsx-sort-props': ERROR,

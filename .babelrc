@@ -1,9 +1,4 @@
 {
-  "presets": [
-    "env",
-    "react"
-  ],
-  "plugins": [
-    "syntax-dynamic-import",
-  ]
+  "presets": ["env", "react", "flow"],
+  "plugins": ["syntax-dynamic-import"]
 }
