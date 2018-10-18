@@ -70,6 +70,7 @@ class App extends Component<Props, State> {
               self.state.selectedAmount,
               item.currency,
             )}
+            type="button"
           >
             Pay
           </button>
