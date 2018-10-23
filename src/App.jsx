@@ -2,9 +2,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import fetch from 'isomorphic-fetch';
+import axios from 'axios';
 
-import summaryDonations from './helpers';
+const axiosInstance = axios.create({ baseURL: 'http://localhost:3001' });
 
 const Card = styled.div`
   margin: 10px;
@@ -44,28 +44,26 @@ class App extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    fetch('http://localhost:3001/charities')
-      .then(resp => resp.json())
-      .then(data => {
-        this.setState({ charities: data });
-      });
+    axiosInstance.get('/charities').then(res => {
+      this.setState({ charities: res.data });
+    });
 
-    fetch('http://localhost:3001/payments')
-      .then(resp => resp.json())
-      .then(data => {
-        this.props.dispatch({
-          type: 'UPDATE_TOTAL_DONATE',
-          amount: summaryDonations(data.map(item => item.amount)),
-        });
+    axiosInstance.get('/payments').then(res => {
+      const payments = res.data;
+      this.props.dispatch({
+        type: 'UPDATE_TOTAL_DONATE',
+        amount: payments.reduce((acc, val) => acc + val.amount, 0),
       });
+    });
   }
 
-  handlePay = (id: number, amount: number, currency: string) => {
-    fetch('http://localhost:3001/payments', {
-      method: 'POST',
-      body: `{ "charitiesId": ${id}, "amount": ${amount}, "currency": "${currency}" }`,
-    })
-      .then(resp => resp.json())
+  handlePay = (charitiesId: number, amount: number, currency: string) => {
+    axiosInstance
+      .post('/payments', {
+        charitiesId,
+        amount,
+        currency,
+      })
       .then(() => {
         this.props.dispatch({
           type: 'UPDATE_TOTAL_DONATE',
