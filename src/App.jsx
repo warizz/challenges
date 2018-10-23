@@ -94,18 +94,23 @@ class App extends React.Component<Props, State> {
         {this.state.charities.map(item => (
           <Card key={item.id}>
             <p>{item.name}</p>
-            {[10, 20, 50, 100, 500].map(amount => (
-              <label key={amount}>
-                <input
-                  name="payment"
-                  onClick={() => {
-                    this.setState({ selectedAmount: amount });
-                  }}
-                  type="radio"
-                />
-                {amount}
-              </label>
-            ))}
+            {[10, 20, 50, 100, 500].map(amount => {
+              const inputId = `payment-${item.id}-${amount}`;
+              return (
+                <label key={amount} htmlFor={inputId}>
+                  <input
+                    id={inputId}
+                    name="payment"
+                    onClick={() => {
+                      this.setState({ selectedAmount: amount });
+                    }}
+                    type="radio"
+                  />
+                  {amount}
+                </label>
+              );
+            })}
+
             <button
               onClick={() => {
                 this.handlePay(
