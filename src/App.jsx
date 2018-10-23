@@ -11,6 +11,14 @@ const Card = styled.div`
   border: 1px solid #ccc;
 `;
 
+const GlobalMessage = styled.p`
+  color: red;
+  margin: 1em 0;
+  font-weight: bold;
+  font-size: 16px;
+  text-align: center;
+`;
+
 type Props = {};
 
 type State = {};
@@ -64,19 +72,11 @@ class App extends Component<Props, State> {
   };
 
   render() {
-    const style = {
-      color: 'red',
-      margin: '1em 0',
-      fontWeight: 'bold',
-      fontSize: '16px',
-      textAlign: 'center',
-    };
-
     return (
       <div>
         <h1>Tamboon React</h1>
         <p>All donations: {this.props.donate}</p>
-        <p style={style}>{this.props.message}</p>
+        <GlobalMessage>{this.props.message}</GlobalMessage>
         {this.state.charities.map((item, i) => (
           <Card key={i}>
             <p>{item.name}</p>
