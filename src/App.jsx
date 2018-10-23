@@ -43,6 +43,31 @@ class App extends Component<Props, State> {
       });
   }
 
+  handlePay = (id, amount, currency) => {
+    fetch('http://localhost:3001/payments', {
+      method: 'POST',
+      body: `{ "charitiesId": ${id}, "amount": ${amount}, "currency": "${currency}" }`,
+    })
+      .then(resp => resp.json())
+      .then(() => {
+        this.props.dispatch({
+          type: 'UPDATE_TOTAL_DONATE',
+          amount,
+        });
+        this.props.dispatch({
+          type: 'UPDATE_MESSAGE',
+          message: `Thanks for donate ${amount}!`,
+        });
+
+        setTimeout(() => {
+          this.props.dispatch({
+            type: 'UPDATE_MESSAGE',
+            message: '',
+          });
+        }, 2000);
+      });
+  };
+
   render() {
     const self = this;
 
@@ -75,12 +100,13 @@ class App extends Component<Props, State> {
               </label>
             ))}
             <button
-              onClick={handlePay.call(
-                self,
-                item.id,
-                self.state.selectedAmount,
-                item.currency,
-              )}
+              onClick={() => {
+                this.handlePay(
+                  item.id,
+                  this.state.selectedAmount,
+                  item.currency,
+                );
+              }}
               type="button"
             >
               Pay
@@ -93,31 +119,3 @@ class App extends Component<Props, State> {
 }
 
 export default connect(state => state)(App);
-
-function handlePay(id, amount, currency) {
-  const self = this;
-  return function() {
-    fetch('http://localhost:3001/payments', {
-      method: 'POST',
-      body: `{ "charitiesId": ${id}, "amount": ${amount}, "currency": "${currency}" }`,
-    })
-      .then(resp => resp.json())
-      .then(() => {
-        self.props.dispatch({
-          type: 'UPDATE_TOTAL_DONATE',
-          amount,
-        });
-        self.props.dispatch({
-          type: 'UPDATE_MESSAGE',
-          message: `Thanks for donate ${amount}!`,
-        });
-
-        setTimeout(() => {
-          self.props.dispatch({
-            type: 'UPDATE_MESSAGE',
-            message: '',
-          });
-        }, 2000);
-      });
-  };
-}
