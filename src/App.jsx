@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import fetch from 'isomorphic-fetch';
@@ -19,11 +19,25 @@ const GlobalMessage = styled.p`
   text-align: center;
 `;
 
-type Props = {};
+type Charity = {
+  currency: string,
+  id: number,
+  image: string,
+  name: string,
+};
 
-type State = {};
+type Props = {
+  dispatch: ({ type: string, [string]: any }) => void,
+  donate: number,
+  message: string,
+};
 
-class App extends Component<Props, State> {
+type State = {
+  charities: Charity[],
+  selectedAmount: number,
+};
+
+class App extends React.Component<Props, State> {
   state = {
     charities: [],
     selectedAmount: 10,
@@ -46,7 +60,7 @@ class App extends Component<Props, State> {
       });
   }
 
-  handlePay = (id, amount, currency) => {
+  handlePay = (id: number, amount: number, currency: string) => {
     fetch('http://localhost:3001/payments', {
       method: 'POST',
       body: `{ "charitiesId": ${id}, "amount": ${amount}, "currency": "${currency}" }`,
