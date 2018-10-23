@@ -10,3 +10,6 @@ build
 
 # Env variables
 .env
+
+# local db
+db.json
