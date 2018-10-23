@@ -45,38 +45,6 @@ class App extends Component<Props, State> {
 
   render() {
     const self = this;
-    const cards = this.state.charities.map((item, i) => {
-      const payments = [10, 20, 50, 100, 500].map((amount, j) => (
-        <label key={j}>
-          <input
-            name="payment"
-            onClick={function() {
-              self.setState({ selectedAmount: amount });
-            }}
-            type="radio"
-          />{' '}
-          {amount}
-        </label>
-      ));
-
-      return (
-        <Card key={i}>
-          <p>{item.name}</p>
-          {payments}
-          <button
-            onClick={handlePay.call(
-              self,
-              item.id,
-              self.state.selectedAmount,
-              item.currency,
-            )}
-            type="button"
-          >
-            Pay
-          </button>
-        </Card>
-      );
-    });
 
     const style = {
       color: 'red',
@@ -85,15 +53,40 @@ class App extends Component<Props, State> {
       fontSize: '16px',
       textAlign: 'center',
     };
-    const donate = this.props.donate;
-    const message = this.props.message;
 
     return (
       <div>
         <h1>Tamboon React</h1>
-        <p>All donations: {donate}</p>
-        <p style={style}>{message}</p>
-        {cards}
+        <p>All donations: {this.props.donate}</p>
+        <p style={style}>{this.props.message}</p>
+        {this.state.charities.map((item, i) => (
+          <Card key={i}>
+            <p>{item.name}</p>
+            {[10, 20, 50, 100, 500].map((amount, j) => (
+              <label key={j}>
+                <input
+                  name="payment"
+                  onClick={function() {
+                    self.setState({ selectedAmount: amount });
+                  }}
+                  type="radio"
+                />
+                {amount}
+              </label>
+            ))}
+            <button
+              onClick={handlePay.call(
+                self,
+                item.id,
+                self.state.selectedAmount,
+                item.currency,
+              )}
+              type="button"
+            >
+              Pay
+            </button>
+          </Card>
+        ))}
       </div>
     );
   }
