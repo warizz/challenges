@@ -91,11 +91,11 @@ class App extends React.Component<Props, State> {
         <h1>Tamboon React</h1>
         <p>All donations: {this.props.donate}</p>
         <GlobalMessage>{this.props.message}</GlobalMessage>
-        {this.state.charities.map((item, i) => (
-          <Card key={i}>
+        {this.state.charities.map(item => (
+          <Card key={item.id}>
             <p>{item.name}</p>
-            {[10, 20, 50, 100, 500].map((amount, j) => (
-              <label key={j}>
+            {[10, 20, 50, 100, 500].map(amount => (
+              <label key={amount}>
                 <input
                   name="payment"
                   onClick={() => {
