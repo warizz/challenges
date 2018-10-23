@@ -16,14 +16,10 @@ type Props = {};
 type State = {};
 
 class App extends Component<Props, State> {
-  constructor(props) {
-    super();
-
-    this.state = {
-      charities: [],
-      selectedAmount: 10,
-    };
-  }
+  state = {
+    charities: [],
+    selectedAmount: 10,
+  };
 
   componentDidMount() {
     const self = this;
