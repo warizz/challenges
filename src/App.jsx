@@ -22,17 +22,16 @@ class App extends Component<Props, State> {
   };
 
   componentDidMount() {
-    const self = this;
     fetch('http://localhost:3001/charities')
       .then(resp => resp.json())
       .then(data => {
-        self.setState({ charities: data });
+        this.setState({ charities: data });
       });
 
     fetch('http://localhost:3001/payments')
       .then(resp => resp.json())
       .then(data => {
-        self.props.dispatch({
+        this.props.dispatch({
           type: 'UPDATE_TOTAL_DONATE',
           amount: summaryDonations(data.map(item => item.amount)),
         });
@@ -65,8 +64,6 @@ class App extends Component<Props, State> {
   };
 
   render() {
-    const self = this;
-
     const style = {
       color: 'red',
       margin: '1em 0',
@@ -87,8 +84,8 @@ class App extends Component<Props, State> {
               <label key={j}>
                 <input
                   name="payment"
-                  onClick={function() {
-                    self.setState({ selectedAmount: amount });
+                  onClick={() => {
+                    this.setState({ selectedAmount: amount });
                   }}
                   type="radio"
                 />
