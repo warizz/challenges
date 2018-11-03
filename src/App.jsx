@@ -85,18 +85,23 @@ class App extends React.Component<Props, State> {
 
   render() {
     return (
-      <div>
+      <div data-test-id="app">
         <h1>Tamboon React</h1>
-        <p>All donations: {this.props.donate}</p>
+        <p>
+          All donations:
+          <strong data-test-id="total-amount">{this.props.donate}</strong>
+        </p>
         <GlobalMessage>{this.props.message}</GlobalMessage>
         {this.state.charities.map(item => (
-          <Card key={item.id}>
-            <p>{item.name}</p>
+          <Card key={item.id} data-test-id={`charity-${item.name}`}>
+            <p data-test-id="name">{item.name}</p>
+
             {[10, 20, 50, 100, 500].map(amount => {
               const inputId = `payment-${item.id}-${amount}`;
               return (
                 <label key={amount} htmlFor={inputId}>
                   <input
+                    data-test-id={inputId}
                     id={inputId}
                     name="payment"
                     onClick={() => {
@@ -110,6 +115,7 @@ class App extends React.Component<Props, State> {
             })}
 
             <button
+              data-test-id="donate"
               onClick={() => {
                 this.handlePay(
                   item.id,

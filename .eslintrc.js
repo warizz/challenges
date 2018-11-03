@@ -13,7 +13,11 @@ module.exports = {
     'prettier/react',
     'prettier/standard',
   ],
-  plugins: ['react', 'prettier', 'flowtype'],
+  env: {
+    'cypress/globals': true,
+    jest: true,
+  },
+  plugins: ['react', 'prettier', 'flowtype', 'cypress'],
   rules: {
     'flowtype/sort-keys': [
       ERROR,
