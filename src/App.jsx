@@ -5,11 +5,12 @@ import styled from 'styled-components';
 import axios from 'axios';
 import { Grid, Row, Col } from 'react-flexbox-grid';
 
+import CharityCard from './CharityCard';
+
 const axiosInstance = axios.create({ baseURL: 'http://localhost:3001' });
 
-const Card = styled.div`
-  margin: 10px;
-  border: 1px solid #ccc;
+const Header = styled.h1`
+  text-align: center;
 `;
 
 const GlobalMessage = styled.p`
@@ -27,6 +28,13 @@ type Charity = {
   name: string,
 };
 
+type Payment = {
+  amount?: number,
+  charitiesId?: string,
+  currency?: string,
+  id: string,
+};
+
 type Props = {
   dispatch: ({ type: string, [string]: any }) => void,
   donate: number,
@@ -35,13 +43,17 @@ type Props = {
 
 type State = {
   charities: Charity[],
+  openningCharity: ?number,
   selectedAmount: number,
 };
+
+const AMOUNTS: $ReadOnlyArray<number> = [10, 20, 50, 100, 500];
 
 class App extends React.Component<Props, State> {
   state = {
     charities: [],
-    selectedAmount: 10,
+    selectedAmount: AMOUNTS[0],
+    openningCharity: null,
   };
 
   componentDidMount() {
@@ -49,11 +61,16 @@ class App extends React.Component<Props, State> {
       this.setState({ charities: res.data });
     });
 
-    axiosInstance.get('/payments').then(res => {
+    axiosInstance.get('/payments').then((res: { data: Payment[] }) => {
       const payments = res.data;
       this.props.dispatch({
         type: 'UPDATE_TOTAL_DONATE',
-        amount: payments.reduce((acc, val) => acc + val.amount, 0),
+        amount: payments.reduce((acc, val) => {
+          if (Number.isNaN(Number(val.amount))) {
+            return acc;
+          }
+          return acc + val.amount;
+        }, 0),
       });
     });
   }
@@ -66,20 +83,15 @@ class App extends React.Component<Props, State> {
         currency,
       })
       .then(() => {
-        this.props.dispatch({
-          type: 'UPDATE_TOTAL_DONATE',
-          amount,
-        });
+        this.props.dispatch({ type: 'UPDATE_TOTAL_DONATE', amount });
+
         this.props.dispatch({
           type: 'UPDATE_MESSAGE',
           message: `Thanks for donate ${amount}!`,
         });
 
         setTimeout(() => {
-          this.props.dispatch({
-            type: 'UPDATE_MESSAGE',
-            message: '',
-          });
+          this.props.dispatch({ type: 'UPDATE_MESSAGE', message: '' });
         }, 2000);
       });
   };
@@ -87,7 +99,7 @@ class App extends React.Component<Props, State> {
   render() {
     return (
       <Grid data-test-id="app" fluid>
-        <h1>Tamboon React</h1>
+        <Header>Tamboon React</Header>
 
         <p>
           All donations:
@@ -98,42 +110,29 @@ class App extends React.Component<Props, State> {
 
         <Row>
           {this.state.charities.map(item => (
-            <Col key={item.id} lg={4} md={6} sm={12}>
-              <Card data-test-id={`charity-${item.name}`}>
-                <p data-test-id="name">{item.name}</p>
-
-                {[10, 20, 50, 100, 500].map(amount => {
-                  const inputId = `payment-${item.id}-${amount}`;
-                  return (
-                    <label key={amount} htmlFor={inputId}>
-                      <input
-                        data-test-id={inputId}
-                        id={inputId}
-                        name="payment"
-                        onClick={() => {
-                          this.setState({ selectedAmount: amount });
-                        }}
-                        type="radio"
-                      />
-                      {amount}
-                    </label>
+            <Col key={item.id} lg={6} md={12}>
+              <CharityCard
+                amounts={AMOUNTS}
+                charity={item}
+                isOpen={this.state.openningCharity === item.id}
+                onClose={() => {
+                  this.setState({ openningCharity: null });
+                }}
+                onOpen={() => {
+                  this.setState({ openningCharity: item.id });
+                }}
+                onPay={() => {
+                  this.handlePay(
+                    item.id,
+                    this.state.selectedAmount,
+                    item.currency,
                   );
-                })}
-
-                <button
-                  data-test-id="donate"
-                  onClick={() => {
-                    this.handlePay(
-                      item.id,
-                      this.state.selectedAmount,
-                      item.currency,
-                    );
-                  }}
-                  type="button"
-                >
-                  Pay
-                </button>
-              </Card>
+                }}
+                onSelectAmount={amount => {
+                  this.setState({ selectedAmount: amount });
+                }}
+                selectedAmount={this.state.selectedAmount}
+              />
             </Col>
           ))}
         </Row>
