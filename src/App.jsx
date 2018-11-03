@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import axios from 'axios';
+import { Grid, Row, Col } from 'react-flexbox-grid';
 
 const axiosInstance = axios.create({ baseURL: 'http://localhost:3001' });
 
@@ -85,51 +86,58 @@ class App extends React.Component<Props, State> {
 
   render() {
     return (
-      <div data-test-id="app">
+      <Grid data-test-id="app" fluid>
         <h1>Tamboon React</h1>
+
         <p>
           All donations:
           <strong data-test-id="total-amount">{this.props.donate}</strong>
         </p>
+
         <GlobalMessage>{this.props.message}</GlobalMessage>
-        {this.state.charities.map(item => (
-          <Card key={item.id} data-test-id={`charity-${item.name}`}>
-            <p data-test-id="name">{item.name}</p>
 
-            {[10, 20, 50, 100, 500].map(amount => {
-              const inputId = `payment-${item.id}-${amount}`;
-              return (
-                <label key={amount} htmlFor={inputId}>
-                  <input
-                    data-test-id={inputId}
-                    id={inputId}
-                    name="payment"
-                    onClick={() => {
-                      this.setState({ selectedAmount: amount });
-                    }}
-                    type="radio"
-                  />
-                  {amount}
-                </label>
-              );
-            })}
+        <Row>
+          {this.state.charities.map(item => (
+            <Col key={item.id} lg={4} md={6} sm={12}>
+              <Card data-test-id={`charity-${item.name}`}>
+                <p data-test-id="name">{item.name}</p>
 
-            <button
-              data-test-id="donate"
-              onClick={() => {
-                this.handlePay(
-                  item.id,
-                  this.state.selectedAmount,
-                  item.currency,
-                );
-              }}
-              type="button"
-            >
-              Pay
-            </button>
-          </Card>
-        ))}
-      </div>
+                {[10, 20, 50, 100, 500].map(amount => {
+                  const inputId = `payment-${item.id}-${amount}`;
+                  return (
+                    <label key={amount} htmlFor={inputId}>
+                      <input
+                        data-test-id={inputId}
+                        id={inputId}
+                        name="payment"
+                        onClick={() => {
+                          this.setState({ selectedAmount: amount });
+                        }}
+                        type="radio"
+                      />
+                      {amount}
+                    </label>
+                  );
+                })}
+
+                <button
+                  data-test-id="donate"
+                  onClick={() => {
+                    this.handlePay(
+                      item.id,
+                      this.state.selectedAmount,
+                      item.currency,
+                    );
+                  }}
+                  type="button"
+                >
+                  Pay
+                </button>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </Grid>
     );
   }
 }
