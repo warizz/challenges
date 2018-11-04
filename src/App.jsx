@@ -111,6 +111,7 @@ class App extends React.Component<Props, State> {
                     this.state.selectedAmount,
                     item.currency,
                   );
+                  this.setState({ openningCharity: null });
                 }}
                 onSelectAmount={amount => {
                   this.setState({ selectedAmount: amount });
