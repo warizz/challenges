@@ -12,7 +12,8 @@
     "client": "webpack-dev-server --open --config webpack.dev.js",
     "test:unit": "jest",
     "test:integration": "NODE_ENV=development cypress run",
-    "test:integration:ui": "NODE_ENV=development cypress open"
+    "test:integration:ui": "NODE_ENV=development cypress open",
+    "build": "webpack -p --config webpack.prod.js"
   },
   "dependencies": {
     "@babel/core": "7.1.2",
