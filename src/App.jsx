@@ -4,20 +4,14 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import axios from 'axios';
 import { Grid, Row, Col } from 'react-flexbox-grid';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import CharityCard from './CharityCard';
 
 const axiosInstance = axios.create({ baseURL: 'http://localhost:3001' });
 
 const Header = styled.h1`
-  text-align: center;
-`;
-
-const GlobalMessage = styled.p`
-  color: red;
-  margin: 1em 0;
-  font-weight: bold;
-  font-size: 16px;
   text-align: center;
 `;
 
@@ -38,7 +32,6 @@ type Payment = {
 type Props = {
   dispatch: ({ type: string, [string]: any }) => void,
   donate: number,
-  message: string,
 };
 
 type State = {
@@ -85,14 +78,7 @@ class App extends React.Component<Props, State> {
       .then(() => {
         this.props.dispatch({ type: 'UPDATE_TOTAL_DONATE', amount });
 
-        this.props.dispatch({
-          type: 'UPDATE_MESSAGE',
-          message: `Thanks for donate ${amount}!`,
-        });
-
-        setTimeout(() => {
-          this.props.dispatch({ type: 'UPDATE_MESSAGE', message: '' });
-        }, 2000);
+        toast.success(`Thanks for donate ${amount}!`);
       });
   };
 
@@ -105,8 +91,6 @@ class App extends React.Component<Props, State> {
           All donations:
           <strong data-test-id="total-amount">{this.props.donate}</strong>
         </p>
-
-        <GlobalMessage>{this.props.message}</GlobalMessage>
 
         <Row>
           {this.state.charities.map(item => (
@@ -136,6 +120,8 @@ class App extends React.Component<Props, State> {
             </Col>
           ))}
         </Row>
+
+        <ToastContainer />
       </Grid>
     );
   }
