@@ -32,6 +32,7 @@ type Payment = {
 type Props = {
   dispatch: ({ type: string, [string]: any }) => void,
   donate: number,
+  payments: $ReadOnlyArray<Payment>,
 };
 
 type State = {
@@ -65,6 +66,8 @@ class App extends React.Component<Props, State> {
           return acc + val.amount;
         }, 0),
       });
+
+      this.props.dispatch({ type: 'UPDATE_PAYMENTS', payments });
     });
   }
 
@@ -75,8 +78,12 @@ class App extends React.Component<Props, State> {
         amount,
         currency,
       })
-      .then(() => {
+      .then(res => {
         this.props.dispatch({ type: 'UPDATE_TOTAL_DONATE', amount });
+        this.props.dispatch({
+          type: 'UPDATE_PAYMENTS',
+          payments: [...this.props.payments, res.data],
+        });
 
         toast.success(`Thanks for donate ${amount}!`);
       });
@@ -117,6 +124,14 @@ class App extends React.Component<Props, State> {
                   this.setState({ selectedAmount: amount });
                 }}
                 selectedAmount={this.state.selectedAmount}
+                totalDonation={this.props.payments
+                  .filter(p => p.charitiesId === item.id)
+                  .reduce((acc, val) => {
+                    if (Number.isNaN(Number(val.amount))) {
+                      return acc;
+                    }
+                    return acc + val.amount;
+                  }, 0)}
               />
             </Col>
           ))}

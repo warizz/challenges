@@ -121,13 +121,18 @@ export default function CharityCard(props: Props) {
     onClose,
     onSelectAmount,
     selectedAmount,
+    totalDonation,
   } = props;
   return (
     <Card>
       <img alt={charity.name} src={`/images/${charity.image}`} />
 
       <div className="cover-content">
-        <p data-test-id="name">{charity.name}</p>
+        <p data-test-id="name">
+          {charity.name}
+          <br />
+          {`(${totalDonation})`}
+        </p>
 
         <Button onClick={onOpen} type="button">
           Donate
